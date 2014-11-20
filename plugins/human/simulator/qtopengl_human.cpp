@@ -6,15 +6,19 @@
  */
 
 #include <argos3/plugins/human/simulator/qtopengl_human.h>
+#include <argos3/plugins/human/simulator/human_entity.h>
+#include <argos3/core/simulator/entity/embodied_entity.h>
+#include <argos3/core/utility/math/vector2.h>
+#include <argos3/core/utility/math/vector3.h>
+#include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h>
 
 namespace argos {
 
     /****************************************/
     /****************************************/
 
-    static const Real LED_RADIUS = 0.1f;
-    const GLfloat MOVABLE_COLOR[]    = { 0.0f, 1.0f, 0.0f, 1.0f };
-    const GLfloat NONMOVABLE_COLOR[] = { 0.7f, 0.7f, 0.7f, 1.0f };
+    const GLfloat BODY_COLOR[]       = { 1.0f, 0.0f, 0.0f, 1.0f };
+    const GLfloat DIRECTION_COLOR[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
     const GLfloat SPECULAR[]         = { 0.0f, 0.0f, 0.0f, 1.0f };
     const GLfloat SHININESS[]        = { 0.0f                   };
     const GLfloat EMISSION[]         = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -28,54 +32,19 @@ namespace argos {
         /* Reserve the needed display lists */
         m_unBaseList = glGenLists(1);
         m_unBodyList = m_unBaseList;
-        m_unLEDList = m_unBaseList + 1;
 
         /* Make body list */
         glNewList(m_unBodyList, GL_COMPILE);
-        MakeBody();
+        RenderBody();
         glEndList();
 
-        /* Make LED list */
-        glNewList(m_unLEDList, GL_COMPILE);
-        MakeLED();
-        glEndList();
     }
 
     /****************************************/
     /****************************************/
 
     CQTOpenGLHuman::~CQTOpenGLHuman() {
-        glDeleteLists(m_unBaseList, 2);
-    }
-
-    /****************************************/
-    /****************************************/
-
-    void CQTOpenGLHuman::DrawLEDs(CHumanEntity& c_entity) {
-        /* Draw the LEDs */
-        GLfloat pfColor[]           = {   0.0f, 0.0f, 0.0f, 1.0f };
-        const GLfloat pfSpecular[]  = {   0.0f, 0.0f, 0.0f, 1.0f };
-        const GLfloat pfShininess[] = { 100.0f                   };
-        const GLfloat pfEmission[]  = {   0.0f, 0.0f, 0.0f, 1.0f };
-        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, pfSpecular);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, pfShininess);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, pfEmission);
-        CLEDEquippedEntity& cLEDEquippedEntity = c_entity.GetLEDEquippedEntity();
-        for(UInt32 i = 0; i < cLEDEquippedEntity.GetAllLEDs().size(); ++i) {
-            glPushMatrix();
-            /* Set the material */
-            const CColor& cColor = cLEDEquippedEntity.GetLED(i).GetColor();
-            pfColor[0] = cColor.GetRed()   / 255.0f;
-            pfColor[1] = cColor.GetGreen() / 255.0f;
-            pfColor[2] = cColor.GetBlue()  / 255.0f;
-            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, pfColor);
-            /* Perform rototranslation */
-            const CVector3& cPosition = cLEDEquippedEntity.GetLEDOffsetPosition(i);
-            glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
-            /* Draw the LED */
-            glCallList(m_unLEDList);
-            glPopMatrix();
-        }
+        glDeleteLists(m_unBaseList, 1);
     }
 
     /****************************************/
@@ -83,12 +52,6 @@ namespace argos {
 
     void CQTOpenGLHuman::Draw(CHumanEntity& c_entity) {
         /* Draw the body */
-        if(c_entity.GetEmbodiedEntity().IsMovable()) {
-            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, MOVABLE_COLOR);
-        }
-        else {
-            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, NONMOVABLE_COLOR);
-        }
         glPushMatrix();
         glScalef(c_entity.GetRadius(), c_entity.GetRadius(), c_entity.GetHeight());
         glCallList(m_unBodyList);
@@ -98,12 +61,13 @@ namespace argos {
     /****************************************/
     /****************************************/
 
-    void CQTOpenGLHuman::MakeBody() {
+    void CQTOpenGLHuman::RenderBody() {
         /* Since this shape can be stretched,
              make sure the normal vectors are unit-long */
         glEnable(GL_NORMALIZE);
 
         /* Set the material */
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, BODY_COLOR);
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, SPECULAR);
         glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, SHININESS);
         glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, EMISSION);
@@ -139,47 +103,19 @@ namespace argos {
             cVertex.Rotate(cAngle);
         }
         glEnd();
+
+        /* Triangle to set the direction */
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, DIRECTION_COLOR);
+        glBegin(GL_TRIANGLES);
+        glVertex3f( 1.0f,  0.0f, 1.001f);
+        glVertex3f(-0.7f,  0.3f, 1.001f);
+        glVertex3f(-0.7f, -0.3f, 1.001f);
+        glEnd();
         /* The shape definition is finished */
 
         /* We don't need it anymore */
         glDisable(GL_NORMALIZE);
 
-    }
-
-    /****************************************/
-    /****************************************/
-
-    void CQTOpenGLHuman::MakeLED() {
-        CVector3 cNormal, cPoint;
-        CRadians cSlice(CRadians::TWO_PI / m_unVertices);
-
-        glBegin(GL_TRIANGLE_STRIP);
-        for(CRadians cInclination; cInclination <= CRadians::PI; cInclination += cSlice) {
-            for(CRadians cAzimuth; cAzimuth <= CRadians::TWO_PI; cAzimuth += cSlice) {
-
-                cNormal.FromSphericalCoords(1.0f, cInclination, cAzimuth);
-                cPoint = LED_RADIUS * cNormal;
-                glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-                glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
-
-                cNormal.FromSphericalCoords(1.0f, cInclination + cSlice, cAzimuth);
-                cPoint = LED_RADIUS * cNormal;
-                glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-                glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
-
-                cNormal.FromSphericalCoords(1.0f, cInclination, cAzimuth + cSlice);
-                cPoint = LED_RADIUS * cNormal;
-                glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-                glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
-
-                cNormal.FromSphericalCoords(1.0f, cInclination + cSlice, cAzimuth + cSlice);
-                cPoint = LED_RADIUS * cNormal;
-                glNormal3f(cNormal.GetX(), cNormal.GetY(), cNormal.GetZ());
-                glVertex3f(cPoint.GetX(), cPoint.GetY(), cPoint.GetZ());
-
-            }
-        }
-        glEnd();
     }
 
     /****************************************/
@@ -192,7 +128,6 @@ namespace argos {
                 static CQTOpenGLHuman m_cModel;
                 c_visualization.DrawPositionalEntity(c_entity.GetEmbodiedEntity());
                 m_cModel.Draw(c_entity);
-                m_cModel.DrawLEDs(c_entity);
             }
     };
 

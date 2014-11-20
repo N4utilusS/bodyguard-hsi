@@ -17,7 +17,6 @@ namespace argos {
 
     static const Real HUMAN_MAX_FORCE                = 300.0f; // TODO Need to verify that. Not important right now.
     static const Real HUMAN_MAX_TORQUE               = 300.0f;
-    static const Real HUMAN_MASS = 80.0f;
 
     enum HUMAN_WHEELS {
         HUMAN_LEFT_WHEEL = 0,
@@ -35,7 +34,7 @@ namespace argos {
                       HUMAN_MAX_FORCE,
                       HUMAN_MAX_TORQUE,
                       HUMAN_INTERWHEEL_DISTANCE),
-                      m_fMass(HUMAN_MASS),
+                      m_fMass(m_cHumanEntity.GetMass()),
                       m_fCurrentWheelVelocity(m_cWheeledEntity.GetWheelVelocities()) {
 
         /* Create the actual body with initial position and orientation */

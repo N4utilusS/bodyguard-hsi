@@ -12,7 +12,6 @@ namespace argos {
     class CControllableEntity;
     class CEmbodiedEntity;
     class CHumanEntity;
-    class CLEDEquippedEntity;
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
@@ -50,10 +49,6 @@ namespace argos {
                 return *m_pcWheeledEntity;
             }
 
-            inline CLEDEquippedEntity& GetLEDEquippedEntity() {
-                return *m_pcLEDEquippedEntity;
-            }
-
             inline Real GetRadius() const {
                 return m_fRadius;
             }
@@ -87,11 +82,9 @@ namespace argos {
             CControllableEntity*    m_pcControllableEntity;
             CEmbodiedEntity*        m_pcEmbodiedEntity;
             CWheeledEntity*         m_pcWheeledEntity;
-            CLEDEquippedEntity*     m_pcLEDEquippedEntity;
             Real                    m_fRadius;
             Real                    m_fHeight;
             Real                    m_fMass;
-            CLEDMedium*             m_pcLEDMedium;
     };
 
 } /* namespace argos */

@@ -10,7 +10,6 @@
 #include <argos3/core/simulator/space/space.h>
 #include <argos3/core/simulator/entity/controllable_entity.h>
 #include <argos3/core/simulator/entity/embodied_entity.h>
-#include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 
 namespace argos {
 
@@ -63,27 +62,6 @@ namespace argos {
             m_pcWheeledEntity->SetWheel(0, CVector3(0.0f,  HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
             m_pcWheeledEntity->SetWheel(1, CVector3(0.0f, -HALF_INTERWHEEL_DISTANCE, 0.0f), WHEEL_RADIUS);
 
-            /* Init LED equipped entity component */
-            m_pcLEDEquippedEntity = new CLEDEquippedEntity(this, m_pcEmbodiedEntity);
-
-            AddComponent(*m_pcLEDEquippedEntity);
-            if(NodeExists(t_tree, "leds")) {
-                /* Create LED equipped entity
-                 * NOTE: the LEDs are not added to the medium yet
-                 */
-                m_pcLEDEquippedEntity->Init(GetNode(t_tree, "leds"));
-                /* Add the LEDs to the medium */
-                std::string strMedium;
-                GetNodeAttribute(GetNode(t_tree, "leds"), "medium", strMedium);
-                m_pcLEDMedium = &CSimulator::GetInstance().GetMedium<CLEDMedium>(strMedium);
-                m_pcLEDEquippedEntity->AddToMedium(*m_pcLEDMedium);
-            }
-            else {
-                /* No LEDs added, no need to update this entity */
-                m_pcLEDEquippedEntity->Disable();
-                m_pcLEDEquippedEntity->SetCanBeEnabledIfDisabled(false);
-            }
-
             /* Controllable entity
                     It must be the last one, for actuators/sensors to link to composing entities correctly */
             m_pcControllableEntity = new CControllableEntity(this);
@@ -121,7 +99,6 @@ namespace argos {
 #define UPDATE(COMPONENT) if(COMPONENT->IsEnabled()) COMPONENT->Update();
 
     void CHumanEntity::UpdateComponents() {
-        UPDATE(m_pcLEDEquippedEntity);
     }
 
     /****************************************/
@@ -135,7 +112,7 @@ namespace argos {
             "REQUIRED XML CONFIGURATION\n\n"
             "  <arena ...>\n"
             "    ...\n"
-            "    <human id=\"h0\" radius=\"0.8\" height=\"0.5\" >\n"
+            "    <human id=\"h0\" radius=\"0.3\" height=\"1.8\" mass=\"80.0\" >\n"
             "      <body position=\"0.4,2.3,0.25\" orientation=\"45,0,0\" />\n"
             "      <controller config=\"mycntrl\" />\n"
             "    </human>\n"

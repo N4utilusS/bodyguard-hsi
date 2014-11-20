@@ -35,14 +35,13 @@ namespace argos {
 
         private:
 
-            void MakeBody();
+            void RenderBody();
             void MakeLED();
 
         private:
 
             GLuint m_unBaseList;
             GLuint m_unBodyList;
-            GLuint m_unLEDList;
             GLuint m_unVertices;
     };
 
