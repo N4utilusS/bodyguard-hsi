@@ -5,7 +5,12 @@
  *      Author: anthonydebruyn
  */
 
-#include <argos3/plugins/human/simulator/human_entity.h>
+#include "human_entity.h"
+#include <argos3/core/utility/math/matrix/rotationmatrix3.h>
+#include <argos3/core/simulator/space/space.h>
+#include <argos3/core/simulator/entity/controllable_entity.h>
+#include <argos3/core/simulator/entity/embodied_entity.h>
+#include <argos3/plugins/simulator/entities/led_equipped_entity.h>
 
 namespace argos {
 
@@ -96,7 +101,7 @@ namespace argos {
     /****************************************/
     /****************************************/
 
-    void CEPuckEntity::Reset() {
+    void CHumanEntity::Reset() {
         /* Reset all components */
         CComposableEntity::Reset();
         /* Update components */
@@ -106,7 +111,7 @@ namespace argos {
     /****************************************/
     /****************************************/
 
-    void CEPuckEntity::Destroy() {
+    void CHumanEntity::Destroy() {
         CComposableEntity::Destroy();
     }
 
@@ -115,7 +120,7 @@ namespace argos {
 
 #define UPDATE(COMPONENT) if(COMPONENT->IsEnabled()) COMPONENT->Update();
 
-    void CEPuckEntity::UpdateComponents() {
+    void CHumanEntity::UpdateComponents() {
         UPDATE(m_pcLEDEquippedEntity);
     }
 

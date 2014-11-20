@@ -44,7 +44,7 @@ namespace argos {
                         cpBodyNew(m_fMass,
                                 cpMomentForCircle(m_fMass,
                                         0.0f,
-                                        2 * ,
+                                        2 * m_cHumanEntity.GetRadius(),
                                         cpvzero)));
         const CVector3& cPosition = GetEmbodiedEntity().GetPosition();
         m_ptActualBaseBody->p = cpv(cPosition.GetX(), cPosition.GetY());

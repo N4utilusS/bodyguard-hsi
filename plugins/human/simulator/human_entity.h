@@ -9,10 +9,15 @@
 #define HUMAN_ENTITY_H_
 
 namespace argos {
+    class CControllableEntity;
+    class CEmbodiedEntity;
     class CHumanEntity;
+    class CLEDEquippedEntity;
 }
 
 #include <argos3/core/simulator/entity/composable_entity.h>
+#include <argos3/plugins/simulator/entities/wheeled_entity.h>
+#include <argos3/plugins/simulator/media/led_medium.h>
 
 namespace argos {
 
