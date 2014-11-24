@@ -29,7 +29,6 @@ namespace argos {
         public:
 
             CHumanEntity();
-            virtual ~CHumanEntity();
 
             virtual void Init(TConfigurationNode& t_tree);
             virtual void Reset();

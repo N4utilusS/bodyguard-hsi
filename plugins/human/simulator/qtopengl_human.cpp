@@ -27,15 +27,21 @@ namespace argos {
     /****************************************/
 
     CQTOpenGLHuman::CQTOpenGLHuman() :
-              m_unVertices(20) {
+                              m_unVertices(20) {
 
         /* Reserve the needed display lists */
-        m_unBaseList = glGenLists(1);
+        m_unBaseList = glGenLists(2);
         m_unBodyList = m_unBaseList;
+        m_unArmList = m_unBaseList + 1;
 
         /* Make body list */
         glNewList(m_unBodyList, GL_COMPILE);
         RenderBody();
+        glEndList();
+
+        /* Make arm list */
+        glNewList(m_unArmList, GL_COMPILE);
+        RenderArm();
         glEndList();
 
     }
@@ -44,7 +50,7 @@ namespace argos {
     /****************************************/
 
     CQTOpenGLHuman::~CQTOpenGLHuman() {
-        glDeleteLists(m_unBaseList, 1);
+        glDeleteLists(m_unBaseList, 2);
     }
 
     /****************************************/
@@ -53,8 +59,21 @@ namespace argos {
     void CQTOpenGLHuman::Draw(CHumanEntity& c_entity) {
         /* Draw the body */
         glPushMatrix();
-        glScalef(c_entity.GetRadius(), c_entity.GetRadius(), c_entity.GetHeight());
+        glScalef(0.5f * c_entity.GetRadius(), c_entity.GetRadius(), c_entity.GetHeight());
         glCallList(m_unBodyList);
+        glPopMatrix();
+
+        /* Draw the arms */
+        glPushMatrix();
+        glScalef(0.15f * c_entity.GetRadius(), 0.15f * c_entity.GetRadius(), 0.4f * c_entity.GetHeight());
+        glTranslatef(0.0f, 10.0f * c_entity.GetRadius(), 0.5f * c_entity.GetHeight());
+        glCallList(m_unArmList);
+        glPopMatrix();
+
+        glPushMatrix();
+        glScalef(0.15f * c_entity.GetRadius(), 0.15f * c_entity.GetRadius(), 0.4f * c_entity.GetHeight());
+        glTranslatef(0.0f, -10.0f * c_entity.GetRadius(), 0.5f * c_entity.GetHeight());
+        glCallList(m_unArmList);
         glPopMatrix();
     }
 
@@ -116,6 +135,53 @@ namespace argos {
         /* We don't need it anymore */
         glDisable(GL_NORMALIZE);
 
+    }
+
+    /****************************************/
+    /****************************************/
+
+    void CQTOpenGLHuman::RenderArm() {
+        glEnable(GL_NORMALIZE);
+
+        /* Set the material */
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, BODY_COLOR);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, SPECULAR);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, SHININESS);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, EMISSION);
+
+        /* Side surface */
+        CVector2 cVertex(1.0f, 0.0f);
+        CRadians cAngle(CRadians::TWO_PI / m_unVertices);
+        glBegin(GL_QUAD_STRIP);
+        for(GLuint i = 0; i <= m_unVertices; i++) {
+            glNormal3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
+            glVertex3f(cVertex.GetX(), cVertex.GetY(), 1.0f);
+            glVertex3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
+            cVertex.Rotate(cAngle);
+        }
+        glEnd();
+        /* Top disk */
+        cVertex.Set(1.0f, 0.0f);
+        glBegin(GL_POLYGON);
+        glNormal3f(0.0f, 0.0f, 1.0f);
+        for(GLuint i = 0; i <= m_unVertices; i++) {
+            glVertex3f(cVertex.GetX(), cVertex.GetY(), 1.0f);
+            cVertex.Rotate(cAngle);
+        }
+        glEnd();
+        /* Bottom disk */
+        cVertex.Set(1.0f, 0.0f);
+        cAngle = -cAngle;
+        glBegin(GL_POLYGON);
+        glNormal3f(0.0f, 0.0f, -1.0f);
+        for(GLuint i = 0; i <= m_unVertices; i++) {
+            glVertex3f(cVertex.GetX(), cVertex.GetY(), 0.0f);
+            cVertex.Rotate(cAngle);
+        }
+        glEnd();
+
+        /* We don't need it anymore */
+        glDisable(GL_NORMALIZE);
     }
 
     /****************************************/
