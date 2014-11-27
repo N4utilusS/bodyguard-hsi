@@ -72,6 +72,14 @@ namespace argos {
                 m_fMass = f_mass;
             }
 
+            inline Real GetIntensity() const {
+               return m_fIntensity;
+            }
+
+            inline void SetIntensity(Real f_intensity) {
+               m_fIntensity = f_intensity;
+            }
+
             virtual std::string GetTypeDescription() const {
                 return "human";
             }
@@ -84,6 +92,8 @@ namespace argos {
             Real                    m_fRadius;
             Real                    m_fHeight;
             Real                    m_fMass;
+            Real                    m_fIntensity;
+
     };
 
 } /* namespace argos */

@@ -28,7 +28,8 @@ namespace argos {
                                       CComposableEntity(NULL),
                                       m_pcControllableEntity(NULL),
                                       m_pcEmbodiedEntity(NULL),
-                                      m_pcWheeledEntity(NULL) {
+                                      m_pcWheeledEntity(NULL),
+                                      m_fIntensity(NULL) {
     }
 
     /****************************************/
@@ -50,6 +51,8 @@ namespace argos {
             GetNodeAttribute(t_tree, "height", m_fHeight);
             /* Parse XML to get the mass */
             GetNodeAttribute(t_tree, "mass", m_fMass);
+            /* Parse XML to get the intensity */
+            GetNodeAttribute(t_tree, "intensity", m_fIntensity);
 
             /* Embodied entity */
             m_pcEmbodiedEntity = new CEmbodiedEntity(this);
