@@ -25,9 +25,11 @@ namespace argos {
 namespace argos {
 
     class CHumanDefaultSensor: public CSimulatedSensor, public CCI_HumanSensor {
+
         public:
             CHumanDefaultSensor();
-            virtual ~CHumanDefaultSensor();
+
+            virtual ~CHumanDefaultSensor() {}
 
             virtual void SetRobot(CComposableEntity& c_entity);
 

@@ -29,7 +29,7 @@ namespace argos {
                                       m_pcControllableEntity(NULL),
                                       m_pcEmbodiedEntity(NULL),
                                       m_pcWheeledEntity(NULL),
-                                      m_fIntensity(NULL) {
+                                      m_fIntensity(1.0f) {
     }
 
     /****************************************/

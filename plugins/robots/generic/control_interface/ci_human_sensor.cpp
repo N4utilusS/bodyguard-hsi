@@ -18,7 +18,7 @@ namespace argos {
     /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_LightSensor::CreateLuaState(lua_State* pt_lua_state) {
+   void CCI_HumanSensor::CreateLuaState(lua_State* pt_lua_state) {
       CLuaUtility::StartTable(pt_lua_state, "human");
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
          CLuaUtility::AddToTable(pt_lua_state, i+1, m_tReadings[i]);
@@ -31,7 +31,7 @@ namespace argos {
    /****************************************/
 
 #ifdef ARGOS_WITH_LUA
-   void CCI_LightSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
+   void CCI_HumanSensor::ReadingsToLuaState(lua_State* pt_lua_state) {
       lua_getfield(pt_lua_state, -1, "human");
       for(size_t i = 0; i < m_tReadings.size(); ++i) {
          lua_pushnumber(pt_lua_state, i+1           );

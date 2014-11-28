@@ -37,7 +37,7 @@ namespace argos {
         try {
             m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
             m_pcControllableEntity = &(c_entity.GetComponent<CControllableEntity>("controller"));
-            m_pcHumanEntity = &(c_entity.GetComponent<CLightSensorEquippedEntity>("human_sensors"));
+            m_pcHumanEntity = &(c_entity.GetComponent<CHumanSensorEquippedEntity>("human_sensors"));
             m_pcHumanEntity->SetCanBeEnabledIfDisabled(true);
             m_pcHumanEntity->Enable();
         }
@@ -51,7 +51,7 @@ namespace argos {
 
     void CHumanDefaultSensor::Init(TConfigurationNode& t_tree) {
         try {
-            CCI_LightSensor::Init(t_tree);
+            CCI_HumanSensor::Init(t_tree);
             /* Show rays? */
             GetNodeAttributeOrDefault(t_tree, "show_rays", m_bShowRays, m_bShowRays);
             /* Parse noise level */
@@ -103,7 +103,7 @@ namespace argos {
                     /* Consider the human only if it has non zero intensity */
                     if(cHuman.GetIntensity() > 0.0f) {
                         /* Set ray end to human position */
-                        cScanningRay.Set(cRayStart, cHuman.GetPosition());
+                        cScanningRay.Set(cRayStart, cHuman.GetEmbodiedEntity().GetPosition());
                         /* Check occlusions */
                         if(! GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
                                 cScanningRay)) {
