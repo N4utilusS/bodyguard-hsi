@@ -5,8 +5,8 @@
  *      Author: anthonydebruyn
  */
 
-#ifndef HUMAN_ENTITY_H_
-#define HUMAN_ENTITY_H_
+#ifndef HUMAN_ENTITY_H
+#define HUMAN_ENTITY_H
 
 namespace argos {
     class CControllableEntity;
@@ -80,7 +80,7 @@ namespace argos {
                m_fIntensity = f_intensity;
             }
 
-            virtual std::string GetTypeDescription() const {
+            virtual std::string GetTypeDescription() const { // TODO Why not return a reference ?
                 return "human";
             }
 
@@ -98,4 +98,4 @@ namespace argos {
 
 } /* namespace argos */
 
-#endif /* HUMAN_ENTITY_H_ */
+#endif /* HUMAN_ENTITY_H */

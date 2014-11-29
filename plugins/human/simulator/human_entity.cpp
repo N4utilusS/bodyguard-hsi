@@ -17,9 +17,9 @@ namespace argos {
     /****************************************/
 
     /* Humans have wheels. They just do not know it yet. */
-    static const Real INTERWHEEL_DISTANCE        = 0.053f;
-    static const Real HALF_INTERWHEEL_DISTANCE   = INTERWHEEL_DISTANCE * 0.5f;
-    static const Real WHEEL_RADIUS               = 0.0205f;
+    static const Real INTERWHEEL_DISTANCE               = 0.053f;
+    static const Real HALF_INTERWHEEL_DISTANCE          = INTERWHEEL_DISTANCE * 0.5f;
+    static const Real WHEEL_RADIUS                      = 0.0205f;
 
     /****************************************/
     /****************************************/
@@ -29,6 +29,9 @@ namespace argos {
                                       m_pcControllableEntity(NULL),
                                       m_pcEmbodiedEntity(NULL),
                                       m_pcWheeledEntity(NULL),
+                                      m_fRadius(0.4f),
+                                      m_fHeight(1.8f),
+                                      m_fMass(80.0f),
                                       m_fIntensity(1.0f) {
     }
 

@@ -19,6 +19,7 @@ namespace argos {
     /****************************************/
 
     static CRange<Real> UNIT(0.0f, 1.0f);
+    static std::string const ENTITY_TYPE = "human";
 
     /****************************************/
     /****************************************/
@@ -106,7 +107,8 @@ namespace argos {
                         cScanningRay.Set(cRayStart, cHuman.GetEmbodiedEntity().GetPosition());
                         /* Check occlusions */
                         if(! GetClosestEmbodiedEntityIntersectedByRay(sIntersection,
-                                cScanningRay)) {
+                                cScanningRay,
+                                ENTITY_TYPE)) {
                             /* No occlusion, the human is visibile */
                             if(m_bShowRays) {
                                 m_pcControllableEntity->AddCheckedRay(false, cScanningRay);
